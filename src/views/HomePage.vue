@@ -1,56 +1,52 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-title>Blank</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
-    <ion-content :fullscreen="true">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">Blank</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <div id="container">
-        <strong>Ready to create an app?</strong>
-        <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-      </div>
+    <ion-content>
+      <h1 class="header">MTGA Game Log</h1>
+      <GameInputComponent @clicked="saveGame">
+      </GameInputComponent>
+      <GameTableComponent :games="games"></GameTableComponent>
     </ion-content>
   </ion-page>
 </template>
 
-<script setup lang="ts">
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+<script>
+  import { IonPage, IonContent } from '@ionic/vue';
+  import GameInputComponent from '../components/GameInputComponent.vue'
+  import GameTableComponent from '../components/GameTableComponent.vue'
+
+  export default {
+    components: {
+      GameInputComponent,
+      GameTableComponent,
+      IonPage,
+      IonContent
+    },
+    data() {
+      return {
+        games: []
+      }
+    },
+    methods: {
+      saveGame(game) {
+        this.games.push(game)
+      }
+    },
+    mounted() {
+      fetch('http://localhost:3000/games.json', {
+        method: 'GET',
+        headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        })
+        .then((response) => response.json())
+        .then((json) => this.games = json)
+    }
+
+  }
 </script>
 
 <style scoped>
-#container {
-  text-align: center;
-  
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-  
-  color: #8c8c8c;
-  
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
+  .header {
+    margin-left: 2em;
+  }
 </style>
